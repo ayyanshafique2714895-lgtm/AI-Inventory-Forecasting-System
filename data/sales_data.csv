@@ -1,0 +1,11 @@
+Date,Product,Category,Units_Sold,Price,Stock_Level
+2026-01-01,Polo Shirt,Shirts,12,35,120
+2026-01-02,Polo Shirt,Shirts,15,35,108
+2026-01-03,Polo Shirt,Shirts,10,35,98
+2026-01-04,Polo Shirt,Shirts,18,35,80
+2026-01-05,Polo Shirt,Shirts,20,35,60
+2026-01-01,Chino Pants,Pants,8,45,90
+2026-01-02,Chino Pants,Pants,11,45,79
+2026-01-03,Chino Pants,Pants,9,45,70
+2026-01-04,Chino Pants,Pants,13,45,57
+2026-01-05,Chino Pants,Pants,14,45,43

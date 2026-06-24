@@ -1,0 +1,18 @@
+==================================================
+Inventory Recommendation Report
+==================================================
+
+Product: Polo Shirt
+Total Units Sold: 75
+Current Stock: 60
+Average Daily Sales: 15.00
+Estimated Days Left: 4.0
+Recommendation: Reorder immediately
+----------------------------------------
+Product: Chino Pants
+Total Units Sold: 55
+Current Stock: 43
+Average Daily Sales: 11.00
+Estimated Days Left: 3.9
+Recommendation: Reorder immediately
+----------------------------------------
