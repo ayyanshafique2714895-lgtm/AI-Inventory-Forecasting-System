@@ -36,6 +36,15 @@ selected_category = st.sidebar.selectbox(
 if selected_category != "All Categories":
     df = df[df["Category"] == selected_category]
 
+product_options = ["All Products"] + list(df["Product"].unique())
+
+selected_product = st.sidebar.selectbox(
+    "Select Product",
+    product_options
+)
+
+if selected_product != "All Products":
+    df = df[df["Product"] == selected_product]
 total_units, total_revenue, lowest_stock, best_product = calculate_kpis(df)
 
 st.sidebar.title("📦 Inventory AI")
@@ -72,7 +81,24 @@ if page == "🏠 Dashboard":
     st.divider()
 
     st.subheader("📊 Sales Data")
-    st.dataframe(df)
+    st.dataframe(
+    df,
+    use_container_width=True,
+    height=400
+)
+    st.divider()
+
+    st.subheader("📈 Sales Trend")
+
+    daily_sales = (
+        df.groupby("Date")["Revenue"]
+        .sum()
+        .reset_index()
+    )
+
+    st.line_chart(
+        daily_sales.set_index("Date")
+    )
 
 elif page == "📊 Analytics":
     st.title("📊 Analytics")
