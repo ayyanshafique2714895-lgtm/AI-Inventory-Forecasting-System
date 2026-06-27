@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 
-from src.pdf_report import generate_pdf_report
 from src.recommendations import generate_recommendations
 from src.forecast import generate_forecast
 from src.data_loader import load_data
@@ -25,27 +24,7 @@ uploaded_file = st.sidebar.file_uploader(
 )
 
 df = load_data(uploaded_file)
-st.sidebar.subheader("Filters")
 
-category_options = ["All Categories"] + list(df["Category"].unique())
-
-selected_category = st.sidebar.selectbox(
-    "Select Category",
-    category_options
-)
-
-if selected_category != "All Categories":
-    df = df[df["Category"] == selected_category]
-
-product_options = ["All Products"] + list(df["Product"].unique())
-
-selected_product = st.sidebar.selectbox(
-    "Select Product",
-    product_options
-)
-
-if selected_product != "All Products":
-    df = df[df["Product"] == selected_product]
 total_units, total_revenue, lowest_stock, best_product = calculate_kpis(df)
 
 st.sidebar.title("📦 Inventory AI")
@@ -82,24 +61,7 @@ if page == "🏠 Dashboard":
     st.divider()
 
     st.subheader("📊 Sales Data")
-    st.dataframe(
-    df,
-    use_container_width=True,
-    height=400
-)
-    st.divider()
-
-    st.subheader("📈 Sales Trend")
-
-    daily_sales = (
-        df.groupby("Date")["Revenue"]
-        .sum()
-        .reset_index()
-    )
-
-    st.line_chart(
-        daily_sales.set_index("Date")
-    )
+    st.dataframe(df)
 
 elif page == "📊 Analytics":
     st.title("📊 Analytics")
@@ -144,91 +106,22 @@ elif page == "📊 Analytics":
     # Trend chart
 
 elif page == "🤖 AI Forecast":
+    st.title("🤖 7-Day AI Sales Forecast")
 
-    st.title("🤖 AI Sales Forecast")
-
-    # Select product
     forecast_product = st.selectbox(
-        "Select Product",
+        "Select product for forecast",
         df["Product"].unique()
     )
 
-    # Select forecast period
-    forecast_days = st.selectbox(
-        "Forecast Period",
-        [7, 30, 90],
-        index=0
-    )
+    forecast_df = generate_forecast(df, forecast_product, days=7)
 
-    # Generate forecast
-    forecast_df = generate_forecast(
-        df,
-        forecast_product,
-        days=forecast_days
-    )
-
-    # -------------------------------
-    # AI Summary
-    # -------------------------------
-
-    total_forecast = forecast_df["Predicted Units Sold"].sum()
-    avg_forecast = forecast_df["Predicted Units Sold"].mean()
-
-    if total_forecast >= 200:
-        demand_trend = "High demand"
-        reorder_quantity = 250
-        priority = "HIGH"
-    
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.metric(
-            "Expected Units Sold",
-            f"{total_forecast:.0f}"
-        )
-
-    with col2:
-        st.metric(
-            "Average Daily Demand",
-            f"{avg_forecast:.1f}"
-        )
-    st.subheader("🤖 AI Confidence")
-
-    confidence = 94.8
-
-    st.progress(confidence / 100)
-
-    st.metric("Prediction Confidence", f"{confidence:.1f}%")   
-    st.success(
-        f"""
-### 🤖 AI Recommendation
-
-Based on historical sales data,
-AI predicts approximately **{total_forecast:.0f} units**
-will be sold during the next
-**{forecast_days} days**.
-
-This forecast can be used to
-support inventory planning.
-"""
-    )
-
-    st.subheader("Forecast Table")
-
-    st.dataframe(
-        forecast_df,
-        use_container_width=True
-    )
-
-    st.subheader("Forecast Trend")
+    st.dataframe(forecast_df)
 
     st.line_chart(
         forecast_df,
         x="Day",
         y="Predicted Units Sold"
     )
-
 elif page == "📦 Inventory Health":
     st.title("📦 Inventory Health")
 
@@ -252,21 +145,6 @@ elif page == "📦 Inventory Health":
         st.divider()
 elif page == "📄 Reports":
     st.title("📄 Reports")
-    pdf_buffer = generate_pdf_report(
-    total_units,
-    total_revenue,
-    lowest_stock,
-    best_product
-)
-
-    st.download_button(
-    label="📄 Download PDF Report",
-    data=pdf_buffer,
-    file_name="ai_inventory_report.pdf",
-    mime="application/pdf"
-)
-
-    st.divider()
 
     df["Revenue"] = df["Units_Sold"] * df["Price"]
 

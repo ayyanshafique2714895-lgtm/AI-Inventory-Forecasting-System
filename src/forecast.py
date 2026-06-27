@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
 
 
 def generate_forecast(df, product, days=7):
@@ -17,7 +17,10 @@ def generate_forecast(df, product, days=7):
     X = forecast_data[["Day", "Previous_Sales"]]
     y = forecast_data["Units_Sold"]
 
-    model = LinearRegression()
+    model = RandomForestRegressor(
+    n_estimators=100,
+    random_state=42
+)
     model.fit(X, y)
 
     predictions = []
