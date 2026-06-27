@@ -24,6 +24,17 @@ uploaded_file = st.sidebar.file_uploader(
 )
 
 df = load_data(uploaded_file)
+st.sidebar.subheader("Filters")
+
+category_options = ["All Categories"] + list(df["Category"].unique())
+
+selected_category = st.sidebar.selectbox(
+    "Select Category",
+    category_options
+)
+
+if selected_category != "All Categories":
+    df = df[df["Category"] == selected_category]
 
 total_units, total_revenue, lowest_stock, best_product = calculate_kpis(df)
 
