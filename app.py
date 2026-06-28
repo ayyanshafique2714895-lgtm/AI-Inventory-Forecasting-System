@@ -288,6 +288,14 @@ elif page == "📄 Reports":
     )
 
     forecast_df = generate_forecast(df, forecast_product, days=7)
+    product_history = df[df["Product"] == forecast_product]
+
+if len(product_history) < 5:
+    st.warning(
+        "Not enough historical data to generate a reliable forecast. "
+        "Please upload at least 5 sales records for this product."
+    )
+    st.stop()
     forecast_csv = forecast_df.to_csv(index=False)
 
     st.subheader("📄 Download AI Forecast Report")
